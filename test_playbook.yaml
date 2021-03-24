@@ -1,0 +1,56 @@
+---
+- hosts: all
+  gather_facts: no
+  vars:
+    data_path: "/home/alireza/checking.txt"
+    main_path: "/home/alireza/"
+  tasks: 
+    - name: do_usname
+      shell: uname > {{ data_path }}
+    
+    - name: do_whoami
+      shell: whoami >> {{ data_path }}
+
+    - name: do_cat_checking
+      register: do_cat_checking
+      shell: cat {{ data_path }}
+      args:
+        executable: /bin/bash
+
+    - debug: msg="{{ do_cat_checking.stdout }}"
+    - debug: msg="{{ do_cat_checking.stderr }}"
+
+    # - name: Delete directory
+    #   file:
+    #     path: "{{ data_path }}"
+    #     state: absent
+    # - name: Delete directory
+    #   shell: /bin/rm -rf {{ data_path }}
+
+    - name: get txt files from home
+      find:
+        paths: "{{ main_path }}"
+        patterns: "*.txt"
+      register: files_to_delete
+
+    - debug: msg="{{ files_to_delete.files }}"
+
+    - name: Ansible remove txt files in home
+      file:
+        path: "{{ item.path }}"
+        state: absent
+      with_items: "{{ files_to_delete.files }}"
+
+    - name: check again for txt files in home
+      find:
+        paths: "{{ main_path }}"
+        patterns: "*.txt"
+      register: txt_files
+
+    - debug: msg="{{ txt_files.files }}"
+
+    - name: check directory
+      shell: ls -l {{ main_path }}
+      register: home_files
+      
+    - debug: msg="{{ home_files.stdout }}"
