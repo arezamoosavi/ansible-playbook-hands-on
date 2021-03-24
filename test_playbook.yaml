@@ -1,6 +1,7 @@
 ---
 - hosts: all
   gather_facts: no
+  become: yes
   vars:
     data_path: "/home/alireza/checking.txt"
     main_path: "/home/alireza/"
@@ -52,5 +53,5 @@
     - name: check directory
       shell: ls -l {{ main_path }}
       register: home_files
-      
+
     - debug: msg="{{ home_files.stdout }}"
