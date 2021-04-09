@@ -1,0 +1,17 @@
+---
+- hosts: all
+  gather_facts: yes
+  become: yes
+  vars:
+    var_do_stuff: "do some stuff"
+  tasks: 
+    - name: echo check list
+      command: echo -e "first task {{ var_do_stuff }} 1 \nand {{ var_do_stuff }} 2"
+      register: ckeck_list
+
+    - name: show results
+      debug: msg="{{ ckeck_list }}"
+      when: ansible_os_family == "RedHat"
+    
+    - debug: msg="{{ ckeck_list.stdout_lines }}"
+      when: ansible_os_family == "Debian"
