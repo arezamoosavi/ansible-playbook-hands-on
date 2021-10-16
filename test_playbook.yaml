@@ -1,10 +1,13 @@
 ---
 - hosts: all
-  gather_facts: no
+  gather_facts: False
+  remote_user: root
   become: yes
+  become_user: root
+  become_method: sudo
   vars:
-    data_path: "/home/alireza/checking.txt"
-    main_path: "/home/alireza/"
+    data_path: "/home/checking.txt"
+    main_path: "/home/"
   tasks: 
     - name: do_usname
       shell: uname > {{ data_path }}
